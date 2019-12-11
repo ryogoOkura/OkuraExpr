@@ -11,4 +11,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Title.unity
     guid: f5c2d62c95fd86a45a242be17299d029
+  - enabled: 1
+    path: Assets/Scenes/Trial.unity
+    guid: c1685a5901fcb8f4e93f37cd4c4735e8
+  - enabled: 1
+    path: Assets/Scenes/Caribration.unity
+    guid: 1a0957c064b2ea14eb7d73a84a9579fd
   m_configObjects: {}

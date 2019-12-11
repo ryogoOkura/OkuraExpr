@@ -67,8 +67,10 @@ public class SceneChange : MonoBehaviour
         switch (num)
         {
             case 0:
+                SceneManager.LoadScene("Trial");
                 break;
             case 1:
+                SceneManager.LoadScene("Caribration");
                 break;
             case 2:
                 SceneManager.LoadScene("ExOkura");
