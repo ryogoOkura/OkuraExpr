@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using TMPro;
 using Valve.VR;
 
@@ -24,13 +25,13 @@ public class MoveEx : MonoBehaviour
     public static int pinchCnt;
     public static int pushCnt;
     public float timeOut;
-
+    
     public static bool isMoving;
     public static bool canStart;
     private float timeElapsed;
     private string str;
     private int strLength;
-    private int[] trialAngle = { 45, 90, -45, 90 };
+    private int[] trialAngle = { 45, 90, -45, -90 };
     private List<int> notFinishTrial = new List<int>{ 0, 1, 2, 3 };
     private int trialNum;
     private int exprNum;
@@ -39,13 +40,13 @@ public class MoveEx : MonoBehaviour
     void Start()
     {
         target.text = "S";
-        message.text = "Push to Expr Start";
+        message.text = "Pinch to Begin";
         numCnt = 0;
         pinchCnt = 0;
         pushCnt = 0;
         isMoving = false;
         canStart = false;
-        timeElapsed = 0f;
+        timeElapsed = 0.0f;
         str = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
         strLength = str.Length;
         trialNum = 0;
@@ -58,7 +59,7 @@ public class MoveEx : MonoBehaviour
     void Update()
     {
         if (isMoving)
-        {
+        {// 移動中
             if (transform.position.z > radius * Mathf.Cos(angleLimit/180 * Mathf.PI))
             { 
                 // 移動
@@ -68,35 +69,43 @@ public class MoveEx : MonoBehaviour
                 timeElapsed += Time.deltaTime;
                 if (timeElapsed >= timeOut)
                 {
-                    int index = Random.Range(0, strLength);
+                    int index = 0;
+                    string nowText = target.text;
+                    string newText = target.text;
+                    while (newText == nowText)
+                    {
+                        index = Random.Range(0, strLength);
+                        newText= str.Substring(index, 1);
+                    }
                     if (index < 8) numCnt += 1;
-                    target.text = str.Substring(index, 1);
+                    target.text = newText;
                     timeElapsed = 0.0f;
                 }
-                // countの変更
+                // Pinch Countの変更
                 if (Pinch.GetStateDown(HandType))
                 {
                     pinchCnt += 1;
                     Debug.Log("Pinch");
                 }
-                if (Push.GetStateDown(HandType))
-                {
-                    pushCnt += 1;
-                    Debug.Log("Push");
-                }
             }
             else
             {
-                message.text = "Push to Restart";
+                message.text = "Face forward\nPinch to Restart";
                 isMoving = false;
                 canStart = false;
+            }
+            // Push Countの変更
+            if (Push.GetStateDown(HandType))
+            {
+                pushCnt += 1;
+                Debug.Log("Push");
             }
         }
         else
         {
             if (canStart)
             {// 移動開始
-                if (Push.GetStateDown(HandType))
+                if (Pinch.GetStateDown(HandType))
                 {
                     isMoving = true;
                     message.text = $"expr{trialNum}_angle{trialAngle[exprNum]}";
@@ -105,14 +114,18 @@ public class MoveEx : MonoBehaviour
             }
             else
             {
-                if (Push.GetStateDown(HandType) && DrainData.isRecording == false)
+                if (Pinch.GetStateDown(HandType) && DrainData.isRecording == false)
                 {// リスタートのための初期化
                     transform.position = defPosition;
                     transform.rotation = defRotation;
 
                     if (notFinishTrial.Count == 0)
                     {
-                        message.text = "Finish";
+                        message.text = "Finish\nPush to Return";
+                        if (Push.GetStateDown(HandType))
+                        {
+                            SceneManager.LoadScene("Title");
+                        }
                     }
                     else
                     {// 実験の種類決定
@@ -133,7 +146,7 @@ public class MoveEx : MonoBehaviour
                         DrainData.TrialName = $"expr{trialNum}";
                         DrainData.angle = angleLimit;
 
-                        message.text = "Push to Start";
+                        message.text = "Pinch to Start";
                         numCnt = 0;
                         pinchCnt = 0;
                         pushCnt = 0;

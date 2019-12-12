@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Assets\Head_Direction.cs" />
     <Compile Include="Assets\HeadTracking.cs" />
+    <Compile Include="Assets\Scripts\DataRecording.cs" />
     <Compile Include="Assets\Scripts\DrainData.cs" />
     <Compile Include="Assets\Scripts\MoveEx.cs" />
     <Compile Include="Assets\Scripts\MoveTrial.cs" />
