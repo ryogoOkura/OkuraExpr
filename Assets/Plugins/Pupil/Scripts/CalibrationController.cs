@@ -2,11 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Valve.VR;
 
 namespace PupilLabs
 {
     public class CalibrationController : MonoBehaviour
     {
+        // ここから付け足し
+        [Header("SteamVR Action")]
+        public SteamVR_Input_Sources HandType;
+        public SteamVR_Action_Boolean Pinch;
+        public SteamVR_Action_Boolean Push;
+        // ここまで
         [Header("Pupil Labs Connection")]
         public SubscriptionsController subsCtrl;
         public TimeSync timeSync;
@@ -78,12 +85,15 @@ namespace PupilLabs
             {
                 UpdateCalibration();
             }
-
-            if (Input.GetKeyUp(KeyCode.C))
+            
+            // 書き換え
+            // if (Input.GetKeyUp(KeyCode.C))
+            if (Push.GetStateDown(HandType)) 
             {
                 ToggleCalibration();
             }
-            else if (Input.GetKeyDown(KeyCode.P))
+            // else if (Input.GetKeyDown(KeyCode.P))
+            else if (Pinch.GetStateDown(HandType)) 
             {
                 showPreview = !showPreview;
             }

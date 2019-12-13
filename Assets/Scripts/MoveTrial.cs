@@ -28,6 +28,7 @@ public class MoveTrial : MonoBehaviour
 
     private bool isMoving;
     private bool canStart;
+    private bool isExiting;
     private float timeElapsed;
     private string str;
     private int strLength;
@@ -44,6 +45,7 @@ public class MoveTrial : MonoBehaviour
         pinchCnt = 0;
         isMoving = false;
         canStart = false;
+        isExiting = false;
         timeElapsed = 0.0f;
         str = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
         strLength = str.Length;
@@ -104,9 +106,11 @@ public class MoveTrial : MonoBehaviour
             {
                 if (Push.GetStateDown(HandType))
                 {
-                    SceneManager.LoadScene("Title");
+                    canStart = false;
+                    isExiting = true;
+                    message.text = "You Want to Exit?\nYes : Push, No : Pinch";
                 }
-                if (Pinch.GetStateDown(HandType))
+                else if (Pinch.GetStateDown(HandType))
                 {// 移動開始
                     isMoving = true;
                     message.text = "";
@@ -114,7 +118,20 @@ public class MoveTrial : MonoBehaviour
             }
             else
             {
-                if (Pinch.GetStateDown(HandType))
+                if (isExiting)
+                {
+                    if (Pinch.GetStateDown(HandType))
+                    {
+                        message.text = "Pinch to Start\nPush to Exit";
+                        canStart = true;
+                        isExiting = false;
+                    }
+                    else if (Push.GetStateDown(HandType))
+                    {
+                        SceneManager.LoadScene("Title");
+                    }
+                }
+                else if (Pinch.GetStateDown(HandType))
                 {// リスタートのための初期化
                     transform.position = defPosition;
                     transform.rotation = defRotation;
@@ -129,7 +146,7 @@ public class MoveTrial : MonoBehaviour
                         speed = Mathf.Abs(speed);
                     }
 
-                    message.text = "Pinch to Start\n\nPush to Return";
+                    message.text = "Pinch to Start\n\nPush to Exit";
                     numCnt = 0;
                     pinchCnt = 0;
                     pushCnt = 0;

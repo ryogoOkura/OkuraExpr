@@ -28,6 +28,7 @@ public class MoveEx : MonoBehaviour
     
     public static bool isMoving;
     public static bool canStart;
+    private bool isExiting;
     private float timeElapsed;
     private string str;
     private int strLength;
@@ -46,6 +47,7 @@ public class MoveEx : MonoBehaviour
         pushCnt = 0;
         isMoving = false;
         canStart = false;
+        isExiting = false;
         timeElapsed = 0.0f;
         str = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
         strLength = str.Length;
@@ -91,6 +93,7 @@ public class MoveEx : MonoBehaviour
             else
             {
                 message.text = "Face forward\nPinch to Restart";
+                target.text = "S";
                 isMoving = false;
                 canStart = false;
             }
@@ -104,24 +107,43 @@ public class MoveEx : MonoBehaviour
         else
         {
             if (canStart)
-            {// 移動開始
-                if (Pinch.GetStateDown(HandType))
+            {
+                if (Push.GetStateDown(HandType))
                 {
+                    canStart = false;
+                    isExiting = true;
+                    message.text = "You Want to Exit?\nYes : Push, No : Pinch";
+                }
+                else if (Pinch.GetStateDown(HandType))
+                {// 移動開始 連動して記録開始
                     isMoving = true;
-                    message.text = $"expr{trialNum}_angle{trialAngle[exprNum]}";
-                    // message.text = "";
+                    // message.text = $"expr{trialNum}_angle{trialAngle[exprNum]}";
+                    message.text = "";
                 }
             }
             else
             {
-                if (Pinch.GetStateDown(HandType) && DrainData.isRecording == false)
+                if (isExiting)
+                {
+                    if (Pinch.GetStateDown(HandType))
+                    {
+                        message.text = "Pinch to Start\nPush to Exit";
+                        canStart = true;
+                        isExiting = false;
+                    }
+                    else if (Push.GetStateDown(HandType))
+                    {
+                        SceneManager.LoadScene("Title");
+                    }
+                }
+                else if (Pinch.GetStateDown(HandType) && DrainData.isRecording == false)
                 {// リスタートのための初期化
                     transform.position = defPosition;
                     transform.rotation = defRotation;
 
                     if (notFinishTrial.Count == 0)
                     {
-                        message.text = "Finish\nPush to Return";
+                        message.text = "Finish\nPush to Exit";
                         if (Push.GetStateDown(HandType))
                         {
                             SceneManager.LoadScene("Title");
@@ -142,11 +164,12 @@ public class MoveEx : MonoBehaviour
                         {
                             speed = Mathf.Abs(speed);
                         }
-                        // データ書き込みへ
+
+                        // データ書き込み
                         DrainData.TrialName = $"expr{trialNum}";
                         DrainData.angle = angleLimit;
 
-                        message.text = "Pinch to Start";
+                        message.text = "Pinch to Start\nPush to Exit";
                         numCnt = 0;
                         pinchCnt = 0;
                         pushCnt = 0;
