@@ -7,6 +7,10 @@ using Valve.VR;
 
 public class SceneChange : MonoBehaviour
 {
+    [Header("Flags")]
+    public bool is60;
+    public bool is30;
+    [Header("Settings")]
     public Button trial;
     public Button caribration;
     public Button start;
@@ -17,9 +21,14 @@ public class SceneChange : MonoBehaviour
 
     private int nowCursol;
 
+    public static bool Is60;
+    public static bool Is30;
+
     // Start is called before the first frame update
     void Start()
     {
+        Is60 = is60;
+        Is30 = is30;
         nowCursol = 0;
         SelectButton(nowCursol);
     }

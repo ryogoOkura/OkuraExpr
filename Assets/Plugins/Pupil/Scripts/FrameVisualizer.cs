@@ -22,6 +22,12 @@ namespace PupilLabs
         MeshRenderer[] eyeRenderer = new MeshRenderer[2];
         bool[] eyePublishingInitialized = new bool[2];
 
+        /*/ 書き足し
+        void Awake()
+        {
+            subscriptionsController = FindObjectOfType<SubscriptionsController>();
+        }//*/
+
         void OnEnable()
         {
             if (cameraAsParent == null || subscriptionsController == null || eyeFrameMaterial == null)

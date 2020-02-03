@@ -34,6 +34,7 @@ namespace PupilLabs
             if (IsConnected)
             {
                 Disconnect();
+                Debug.Log("Disconnect");
             }
         }
 

@@ -15,6 +15,9 @@ namespace PupilLabs
 
         void Awake()
         {
+            /*/ ‘‚«‘«‚µ
+            subsCtrl = FindObjectOfType<SubscriptionsController>(); //*/
+
             SetStatusText("Not connected");
             calibrationController = GetComponent<CalibrationController>();
         }

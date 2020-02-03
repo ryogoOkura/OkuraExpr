@@ -48,6 +48,12 @@ namespace PupilLabs
 
         bool previewMarkersActive = false;
 
+        /*/ 書き足し
+        void Awake()
+        {
+            subsCtrl = FindObjectOfType<SubscriptionsController>();
+        }//*/
+
         void OnEnable()
         {
             calibration.OnCalibrationSucceeded += CalibrationSucceeded;

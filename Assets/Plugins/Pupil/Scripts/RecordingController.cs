@@ -38,6 +38,11 @@ namespace PupilLabs
                 StopRecording();
             }
         }
+        // 書き足し
+        private void Start()
+        {
+            requestCtrl = FindObjectOfType<RequestController>();
+        }
 
         void Update()
         {

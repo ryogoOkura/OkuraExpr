@@ -15,6 +15,7 @@ namespace PupilLabs
 
         void OnEnable()
         {
+            // requestCtrl = FindObjectOfType<RequestController>(); // 書き足し
             requestCtrl.OnConnected += UpdateTimeSync;
         }
         

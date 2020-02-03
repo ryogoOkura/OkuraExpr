@@ -21,11 +21,13 @@ public class MoveTrial : MonoBehaviour
 
     [SerializeField] private TextMeshPro target;
     [SerializeField] private TextMeshProUGUI message;
-    public int numCnt;
+    public string mark;
+    public int markCnt;
     public int pushCnt;
     public int pinchCnt;
     public float timeOut;
 
+    private bool isPreparing;
     private bool isMoving;
     private bool canStart;
     private bool isExiting;
@@ -38,11 +40,12 @@ public class MoveTrial : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        target.text = "S";
+        target.text = "+";
         message.text = "Pinch to Begin";
-        numCnt = 0;
+        markCnt = 0;
         pushCnt = 0;
         pinchCnt = 0;
+        isPreparing = false;
         isMoving = false;
         canStart = false;
         isExiting = false;
@@ -59,7 +62,7 @@ public class MoveTrial : MonoBehaviour
     {
         if (isMoving)
         {// 移動中
-            if (transform.position.z > Mathf.Cos(angleLimit))
+            if (transform.position.z > Mathf.Cos(angleLimit / 180 * Mathf.PI))
             {
                 // 移動
                 transform.RotateAround(new Vector3(0f, defPosition.y, 0f), Vector3.up, speed * Time.deltaTime);
@@ -76,7 +79,7 @@ public class MoveTrial : MonoBehaviour
                         index = Random.Range(0, strLength);
                         newText = str.Substring(index, 1);
                     }
-                    if (index < 8) numCnt += 1;
+                    if (newText == mark) markCnt += 1;
                     target.text = newText;
                     timeElapsed = 0.0f;
                 }
@@ -86,43 +89,58 @@ public class MoveTrial : MonoBehaviour
                     pinchCnt += 1;
                     Debug.Log("Pinch");
                 }
+                // Push Countの変更
+                if (Push.GetStateDown(HandType))
+                {
+                    pushCnt += 1;
+                    Debug.Log("Push");
+                }
             }
             else
             {// 停止
-                message.text = "Pinch to Restart";
+                message.text = $"Push:{pushCnt}, Mark:{markCnt}\n\nFace forward\nPinch to Restart";
+                target.text = "+";
                 isMoving = false;
                 canStart = false;
-            }
-            // Push Countの変更
-            if (Push.GetStateDown(HandType))
-            {
-                pushCnt += 1;
-                Debug.Log("Push");
+                isPreparing = false;
             }
         }
         else
         {
             if (canStart)
             {
-                if (Push.GetStateDown(HandType))
+                if (isPreparing)
                 {
-                    canStart = false;
-                    isExiting = true;
-                    message.text = "You Want to Exit?\nYes : Push, No : Pinch";
+                    if (Pinch.GetStateDown(HandType))
+                    {
+                        isMoving = true;
+                        message.text = "";
+                    }
                 }
-                else if (Pinch.GetStateDown(HandType))
-                {// 移動開始
-                    isMoving = true;
-                    message.text = "";
+                else
+                {// message.text = "Pinch to Start\nPush to Exit";
+                    if (Push.GetStateDown(HandType))
+                    {
+                        canStart = false;
+                        isExiting = true;
+                        message.text = "You Want to Exit?\n\nYes : Push, No : Pinch";
+                    }
+                    else if (Pinch.GetStateDown(HandType))
+                    {
+                        isPreparing = true;
+                        int index = Random.Range(0, strLength);
+                        mark = str.Substring(index, 1);
+                        message.text = $"When \"{mark}\" is Displayed, \nPush to Count\n\nPinch to Start";
+                    }
                 }
             }
             else
             {
                 if (isExiting)
-                {
+                {// message.text = "You Want to Exit?\nYes : Push, No : Pinch"
                     if (Pinch.GetStateDown(HandType))
                     {
-                        message.text = "Pinch to Start\nPush to Exit";
+                        message.text = "Pinch to Go Next\n\nPush to Exit";
                         canStart = true;
                         isExiting = false;
                     }
@@ -146,8 +164,8 @@ public class MoveTrial : MonoBehaviour
                         speed = Mathf.Abs(speed);
                     }
 
-                    message.text = "Pinch to Start\n\nPush to Exit";
-                    numCnt = 0;
+                    message.text = "Pinch to Go Next\n\nPush to Exit";
+                    markCnt = 0;
                     pinchCnt = 0;
                     pushCnt = 0;
                     canStart = true;

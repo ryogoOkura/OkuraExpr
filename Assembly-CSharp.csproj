@@ -63,13 +63,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Head_Direction.cs" />
     <Compile Include="Assets\HeadTracking.cs" />
     <Compile Include="Assets\Scripts\DataRecording.cs" />
     <Compile Include="Assets\Scripts\DrainData.cs" />
     <Compile Include="Assets\Scripts\MoveEx.cs" />
     <Compile Include="Assets\Scripts\MoveTrial.cs" />
     <Compile Include="Assets\Scripts\Pointer.cs" />
+    <Compile Include="Assets\Scripts\Recenterer.cs" />
     <Compile Include="Assets\Scripts\SceneChange.cs" />
     <Compile Include="Assets\Scripts\SetFOV.cs" />
     <Compile Include="Assets\Target.cs" />
